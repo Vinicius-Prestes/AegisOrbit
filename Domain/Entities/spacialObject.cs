@@ -2,29 +2,29 @@ using AegisOrbit.API.Domain.ValueObjects;
 
 namespace AegisOrbit.API.Domain.Entities;
 
-public abstract class ObjetoEspacial
+public abstract class SpacialObject
 {
     public Guid Id { get; protected set; }
-    public string Nome { get; protected set; }
-    public double Massa { get; protected set; } // Em kg
-    public CoordenadasOrbitais PosicaoAtual { get; protected set; }
-    public double Velocidade { get; protected set; } // Em km/h
+    public string Name { get; protected set; }
+    public double Mass { get; protected set; } // In kg
+    public OrbitalCoordinates CurrentPosition { get; protected set; }
+    public double Velocity { get; protected set; } // In km/h
 
-    protected ObjetoEspacial(string nome, double massa, CoordenadasOrbitais posicaoInicial, double velocidade)
+    protected SpacialObject(string name, double mass, OrbitalCoordinates initialPosition, double velocity)
     {
         Id = Guid.NewGuid();
-        Nome = nome;
-        Massa = massa;
-        PosicaoAtual = posicaoInicial;
-        Velocidade = velocidade;
+        Name = name;
+        Mass = mass;
+        CurrentPosition = initialPosition;
+        Velocity = velocity;
     }
 
-    // Método Polimórfico: Cada tipo de objeto calcula seu risco de reentrada de forma diferente
-    public abstract double CalcularRiscoReentradaAtmosferica();
+    // Polymorphic Method: Each object type calculates its reentry risk differently
+    public abstract double CalculateAtmosphericReentryRisk();
 
-    public void AtualizarPosicao(CoordenadasOrbitais novaPosicao, double novaVelocidade)
+    public void UpdatePosition(OrbitalCoordinates newPosition, double newVelocity)
     {
-        PosicaoAtual = novaPosicao;
-        Velocidade = novaVelocidade;
+        CurrentPosition = newPosition;
+        Velocity = newVelocity;
     }
 }

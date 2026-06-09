@@ -4,10 +4,15 @@ namespace AegisOrbit.API.Domain.Entities;
 
 public class DebrisSpace : SpacialObject
 {
-    public string Origin { get; private set; }  //corrigindo classe
+    public string Origin { get; private set; } = string.Empty;
     public double EstimatedSizeMeters { get; private set; }
 
+    // Construtor protegido exigido pelo Entity Framework Core
+    protected DebrisSpace() : base()
+    {
+    }
 
+    // Construtor usado pela sua aplicação
     public DebrisSpace(string name, double mass, OrbitalCoordinates position, double velocity, string origin, double estimatedSize)
         : base(name, mass, position, velocity)
     {

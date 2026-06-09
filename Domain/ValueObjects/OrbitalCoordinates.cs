@@ -1,17 +1,24 @@
 namespace AegisOrbit.API.Domain.ValueObjects;
 
-public readonly struct OrbitalCoordinates
+public record OrbitalCoordinates
 {
-    public double Latitude { get; }
-    public double Longitude { get; }
-    public double Altitude { get; } // In kilometers
-    public DateTime UpdatedAt { get; }
+    public double Latitude { get; init; }
+    public double Longitude { get; init; }
+    public double Altitude { get; init; }
+    public DateTime UpdatedAt { get; init; }
 
-    public OrbitalCoordinates(double latitude, double longitude, double altitude)
+    public OrbitalCoordinates(
+        double latitude,
+        double longitude,
+        double altitude)
     {
         Latitude = latitude;
         Longitude = longitude;
         Altitude = altitude;
-        UpdatedAt = DateTime.UtcNow; // Precise DateTime manipulation
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    private OrbitalCoordinates()
+    {
     }
 }

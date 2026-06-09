@@ -1,13 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using AegisOrbit.API.Data;
+using AegisOrbit.API.Domain.Interface;
+using AegisOrbit.API.Domain.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// 1. Configuração do Banco de Dados Oracle
+builder.Services.AddDbContext<AegisOrbitContext>(options =>
+    options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection")));
+
+// 2. Injeção de Dependência 
+builder.Services.AddScoped<ICollisionService, CollisionService>();
+
+// Configurações padrão do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuração do Pipeline de Requisições HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,6 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// --- Endpoint de exemplo ---
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -23,7 +35,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -38,6 +50,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
+// Registro do Record auxiliar do template
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);

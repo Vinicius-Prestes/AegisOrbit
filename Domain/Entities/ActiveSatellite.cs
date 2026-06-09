@@ -5,10 +5,16 @@ namespace AegisOrbit.API.Domain.Entities;
 
 public class ActiveSatellite : SpacialObject, ITelemetryTransmitter
 {
-    public string Operator { get; private set; }
-    public string OperatingFrequency { get; private set; }
+    public string Operator { get; private set; } = string.Empty;
+    public string OperatingFrequency { get; private set; } = string.Empty;
     public bool IsSignalActive { get; private set; }
 
+    // Construtor protegido exigido pelo Entity Framework Core
+    protected ActiveSatellite() : base()
+    {
+    }
+
+    // Construtor usado pela sua aplicação / Controller
     public ActiveSatellite(string name, double mass, OrbitalCoordinates position, double velocity, string satelliteOperator, string frequency)
         : base(name, mass, position, velocity)
     {
@@ -19,7 +25,6 @@ public class ActiveSatellite : SpacialObject, ITelemetryTransmitter
 
     public override double CalculateAtmosphericReentryRisk()
     {
-        // Active satellites have thrusters to perform controlled reentry (lower environmental risk)
         return (Mass * 0.05) / CurrentPosition.Altitude;
     }
 

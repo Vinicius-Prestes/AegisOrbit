@@ -1,0 +1,11 @@
+# Ignorar pastas de compilação e cache
+bin/
+obj/
+.vscode/
+
+# Ignorar arquivos de configuração locais com senhas reais
+appsettings.json
+appsettings.Development.json
+
+# Mas garantir que o arquivo de exemplo vá para o GitHub
+!appsettings.Example.json

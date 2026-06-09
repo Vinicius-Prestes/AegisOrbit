@@ -5,12 +5,23 @@ namespace AegisOrbit.API.Domain.Entities;
 public abstract class SpacialObject
 {
     public Guid Id { get; protected set; }
-    public string Name { get; protected set; }
-    public double Mass { get; protected set; } // In kg
+    public string Name { get; protected set; } = string.Empty;
+    public double Mass { get; protected set; }
     public OrbitalCoordinates CurrentPosition { get; protected set; }
-    public double Velocity { get; protected set; } // In km/h
+    = new OrbitalCoordinates(0, 0, 0);
+    public double Velocity { get; protected set; }
 
-    protected SpacialObject(string name, double mass, OrbitalCoordinates initialPosition, double velocity)
+    // Construtor usado pelo Entity Framework
+    protected SpacialObject()
+    {
+    }
+
+    // Construtor usado pela aplicação
+    protected SpacialObject(
+        string name,
+        double mass,
+        OrbitalCoordinates initialPosition,
+        double velocity)
     {
         Id = Guid.NewGuid();
         Name = name;
@@ -19,10 +30,11 @@ public abstract class SpacialObject
         Velocity = velocity;
     }
 
-    // Polymorphic Method: Each object type calculates its reentry risk differently
     public abstract double CalculateAtmosphericReentryRisk();
 
-    public void UpdatePosition(OrbitalCoordinates newPosition, double newVelocity)
+    public void UpdatePosition(
+        OrbitalCoordinates newPosition,
+        double newVelocity)
     {
         CurrentPosition = newPosition;
         Velocity = newVelocity;

@@ -12,6 +12,9 @@ builder.Services.AddDbContext<AegisOrbitContext>(options =>
 // 2. Injeção de Dependência 
 builder.Services.AddScoped<ICollisionService, CollisionService>();
 
+// 3. ATIVAÇÃO DOS CONTROLLERS (Essencial para o seu OrbitalController funcionar)
+builder.Services.AddControllers();
+
 // Configurações padrão do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,31 +30,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// --- Endpoint de exemplo ---
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+// 4. MAPEAMENTO DAS ROTAS DOS CONTROLLERS (Diz para a API expor os seus endpoints)
+app.MapControllers();
 
 app.Run();
-
-// Registro do Record auxiliar do template
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

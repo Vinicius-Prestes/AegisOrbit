@@ -2,7 +2,7 @@ using AegisOrbit.API.Domain.ValueObjects;
 
 namespace AegisOrbit.API.Domain.Entities;
 
-public abstract class SpacialObject
+public abstract partial class SpacialObject
 {
     public Guid Id { get; protected set; }
     public string Name { get; protected set; } = string.Empty;
@@ -28,15 +28,5 @@ public abstract class SpacialObject
         Mass = mass;
         CurrentPosition = initialPosition;
         Velocity = velocity;
-    }
-
-    public abstract double CalculateAtmosphericReentryRisk();
-
-    public void UpdatePosition(
-        OrbitalCoordinates newPosition,
-        double newVelocity)
-    {
-        CurrentPosition = newPosition;
-        Velocity = newVelocity;
     }
 }

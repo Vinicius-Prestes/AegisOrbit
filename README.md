@@ -99,32 +99,48 @@ http://localhost:5138/swagger
 
 A interface Swagger permite explorar e testar todos os endpoints da aplicação sem necessidade de ferramentas adicionais.
 
-Fluxo de Teste Recomendado
+## Diagrama de Fluxo
 
-Para validar rapidamente as principais funcionalidades da plataforma:
+O diagrama abaixo representa os dois fluxos principais da plataforma: **ingestão de objetos orbitais** e **análise de risco de colisão**.
 
-1. Registrar um Satélite
+```mermaid
+flowchart TD
+    Cliente([Cliente / Operador])
 
-Utilize:
+    subgraph Ingestão["Ingestão de Objetos Orbitais"]
+        direction TB
+        A1[POST /api/orbital/satellite] --> B1[Cria OrbitalCoordinates\nstruct com timestamp UTC]
+        A2[POST /api/orbital/debris]    --> B2[Cria OrbitalCoordinates\nstruct com timestamp UTC]
+        B1 --> C1[Persiste ActiveSatellite\nno Oracle via EF Core]
+        B2 --> C2[Persiste DebrisSpace\nno Oracle via EF Core]
+    end
 
-POST /api/orbital/satellite
-2. Registrar um Detrito Espacial
+    subgraph Consulta["Consulta e Análise de Risco"]
+        direction TB
+        D1[GET /api/orbital] --> E1[Retorna todos os\nobjetos do banco]
 
-Utilize:
+        D2[GET /api/orbital/check-collision\n?idA=...&idB=...] --> E2{Objetos existem?}
+        E2 -- Não --> F2[404 Not Found]
+        E2 -- Sim  --> G2{Altitude válida\n altitude > 0?}
+        G2 -- Não  --> H2[CollisionCalculationException\n400 Bad Request]
+        G2 -- Sim  --> I2[CollisionService calcula\ndistância e probabilidade]
+        I2 --> J2[Retorna CollisionAlertDTO\nLOW / MEDIUM / CRITICAL]
 
-POST /api/orbital/debris
-3. Consultar Objetos Monitorados
+        D3[GET /api/orbital/threat-report] --> E3[Carrega todos os\nobjetos do banco]
+        E3 --> F3[Loop combinatório n²\npor cada par de objetos]
+        F3 --> G3{Cálculo bem-sucedido?}
+        G3 -- Exceção  --> H3[Ignora par com erro\ncontinua loop]
+        G3 -- Sucesso  --> I3[Acumula CollisionAlertDTO]
+        I3 --> J3[Ordena por probabilidade\ndescendente]
+        J3 --> K3[Retorna relatório\nconsolidado de ameaças]
+    end
 
-Utilize:
-
-GET /api/orbital
-4. Gerar Relatório Completo de Ameaças
-
-Utilize:
-
-GET /api/orbital/threat-report
-
-Esse endpoint realiza o cruzamento automático de todos os objetos cadastrados, identificando potenciais riscos de colisão e classificando-os por nível de criticidade.
+    Cliente --> A1
+    Cliente --> A2
+    Cliente --> D1
+    Cliente --> D2
+    Cliente --> D3
+```
 
 Evidências da Aplicação
 
@@ -147,3 +163,21 @@ Relatório de Ameaças Orbitais
 Consulta Geral de Objetos Monitorados
 
 <img width="1331" height="834" alt="image" src="https://github.com/user-attachments/assets/37c6ce13-bdae-4c9f-8b88-43b5a30d7d64" />
+
+---
+
+## Segurança
+
+A análise completa de segurança da plataforma — incluindo threat modeling, arquitetura de controles, conformidade com ISO 27001 e LGPD, e o plano de resposta a incidentes — está documentada em [SECURITY.md](./SECURITY.md).
+
+---
+
+## Equipe
+
+| Nome | RM |
+|------|----|
+| Denise Senise | 556006 |
+| Larissa Rodrigues Lapa | 554517 |
+| Mateus Leme | 557803 |
+| David Gabriel Gomes Fernandes | 556020 |
+| Vinicius Augusto Neves Prestes | 559097 |
